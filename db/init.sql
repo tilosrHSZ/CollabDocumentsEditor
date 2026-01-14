@@ -93,3 +93,115 @@ CREATE TABLE folders (
 ALTER TABLE documents
     ADD COLUMN is_starred BOOLEAN DEFAULT FALSE COMMENT '是否为重要记录',
     ADD COLUMN folder_id INT DEFAULT 0 COMMENT '所属文件夹ID，0代表根目录';
+
+
+create table chat_messages
+(
+    id         int auto_increment
+        primary key,
+    doc_id     int                                 null,
+    user_id    int                                 null,
+    username   varchar(50)                         null,
+    content    text                                null,
+    created_at timestamp default CURRENT_TIMESTAMP null
+);
+
+create table folders
+(
+    id         int auto_increment
+        primary key,
+    name       varchar(50)                         not null,
+    user_id    int                                 not null,
+    created_at timestamp default CURRENT_TIMESTAMP null
+);
+
+create table users
+(
+    id         int auto_increment
+        primary key,
+    username   varchar(50)                               not null,
+    password   varchar(255)                              not null,
+    email      varchar(100)                              null,
+    phone      varchar(20)                               null,
+    avatar     varchar(255) default 'default_avatar.png' null,
+    bio        text                                      null,
+    created_at timestamp    default CURRENT_TIMESTAMP    null,
+    role       varchar(20)  default 'editor'             null comment 'admin, editor, viewer',
+    constraint username
+        unique (username)
+);
+
+create table documents
+(
+    id         int auto_increment
+        primary key,
+    title      varchar(255)                           not null,
+    content    longtext                               null,
+    owner_id   int                                    null,
+    created_at timestamp    default CURRENT_TIMESTAMP null,
+    updated_at timestamp    default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP,
+    category   varchar(50)  default '默认'            null,
+    tags       varchar(255) default ''                null,
+    is_starred tinyint(1)   default 0                 null comment '是否为重要记录',
+    folder_id  int          default 0                 null comment '所属文件夹ID，0代表根目录',
+    constraint documents_ibfk_1
+        foreign key (owner_id) references users (id)
+);
+
+create table comments
+(
+    id         int auto_increment
+        primary key,
+    doc_id     int                                 null,
+    user_id    int                                 null,
+    content    text                                null,
+    line_num   int       default 0                 null,
+    created_at timestamp default CURRENT_TIMESTAMP null,
+    constraint comments_ibfk_1
+        foreign key (doc_id) references documents (id)
+            on delete cascade,
+    constraint comments_ibfk_2
+        foreign key (user_id) references users (id)
+);
+
+create index doc_id
+    on comments (doc_id);
+
+create index user_id
+    on comments (user_id);
+
+create table doc_versions
+(
+    id           int auto_increment
+        primary key,
+    doc_id       int                                 not null comment '关联的文档ID',
+    content      longtext                            null comment '该版本的内容',
+    version_name varchar(100)                        null comment '版本备注（如：第一次修改）',
+    created_at   timestamp default CURRENT_TIMESTAMP null,
+    constraint doc_versions_ibfk_1
+        foreign key (doc_id) references documents (id)
+            on delete cascade
+)
+    comment '文档版本历史表';
+
+create index doc_id
+    on doc_versions (doc_id);
+
+create index owner_id
+    on documents (owner_id);
+
+create table operation_logs
+(
+    id         int auto_increment
+        primary key,
+    user_id    int                                 null,
+    action     varchar(255)                        null comment '操作内容',
+    doc_id     int                                 null,
+    created_at timestamp default CURRENT_TIMESTAMP null,
+    constraint operation_logs_ibfk_1
+        foreign key (user_id) references users (id)
+);
+
+create index user_id
+    on operation_logs (user_id);
+
