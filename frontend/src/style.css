@@ -1,0 +1,52 @@
+:root {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: #303133;
+  background-color: #f0f2f5; 
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --el-color-primary: #568bbd; 
+  --el-color-primary-light-3: #69c0ff;
+  --el-color-success: #86a877;
+  --el-color-danger: #f08e8e;
+
+  --el-border-radius-base: 4px;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: block; 
+}
+
+
+#app {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left; 
+}
+
+a {
+  font-weight: 500;
+  color: #409EFF;
+  text-decoration: none;
+  transition: 0.3s;
+}
+a:hover {
+  color: #66b1ff;
+}
+
+button {
+  background-color: transparent;
+}
